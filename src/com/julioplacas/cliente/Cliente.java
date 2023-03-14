@@ -66,8 +66,6 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
     this.fEntrada = fEntrada;
     this.barcos = barcos;
 
-    this.hilo = new Thread(this);
-
     this.turno = fEntrada.readInt();
     System.out.println("Turno: " + this.turno);
     this.estado = Estado.values()[fEntrada.readInt()];
@@ -81,7 +79,21 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
     this.sus_barcos = this.initButtons(pane, BorderLayout.LINE_END, true);
     this.setVisible(true);
 
+    this.pintarBarcos();
+
+    this.hilo = new Thread(this);
     this.hilo.start();
+  }
+
+  private void pintarBarcos() {
+    for (final Barco barco : this.barcos) {
+      for (int i = 0; i < barco.longitud; i++) {
+        if (barco.direccion == Direccion.HORIZONTAL)
+          this.mis_barcos[barco.posicion.y][barco.posicion.x + i].setText("A");
+        else
+          this.mis_barcos[barco.posicion.y + i][barco.posicion.x].setText("A");
+      }
+    }
   }
 
   @Override
@@ -150,21 +162,21 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   @Override
   public void actionPerformed(final ActionEvent e) {
     final JButton button = (JButton) e.getSource();
-    int x = -1, y = -1;
+    int y = -1, x = -1;
     for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
       for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
         if (this.sus_barcos[i][j] == button) {
-          x = i;
-          y = j;
+          y = i;
+          x = j;
           break;
         }
       }
     }
-    this.sus_barcos[x][y].setEnabled(false);
-    this.sus_barcos[x][y].setBackground(Color.GRAY);
+    this.sus_barcos[y][x].setEnabled(false);
+    this.sus_barcos[y][x].setBackground(Color.GRAY);
   }
 
-  public boolean hayBarco(
+  private boolean hayBarco(
     final int x,
     final int y
   ) {
@@ -183,8 +195,8 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   ) {
     return barco.direccion == Direccion.HORIZONTAL
       && barco.posicion.y == y
-      && barco.posicion.x >= x
-      && barco.posicion.x + barco.longitud <= barco.posicion.x;
+      && x >= barco.posicion.x
+      && x < barco.posicion.x + barco.longitud;
   }
 
   private boolean barcoEnVertical(
@@ -194,7 +206,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   ) {
     return barco.direccion == Direccion.VERTICAL
       && barco.posicion.x == x
-      && barco.posicion.y >= y
-      && barco.posicion.y + barco.longitud <= barco.posicion.y;
+      && y >= barco.posicion.y
+      && y < barco.posicion.y + barco.longitud;
   }
 }
