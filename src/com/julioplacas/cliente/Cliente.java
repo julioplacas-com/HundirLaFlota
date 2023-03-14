@@ -112,7 +112,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
           final int x = this.fEntrada.readInt();
           final int y = this.fEntrada.readInt();
           System.out.println("Enemigo pincho: " + x + "," + y);
-          if (this.hayBarco(x, y)) {
+          if (Utilidad.hayBarcoEnPosicion(x, y, this.barcos)) {
             this.sus_barcos[x][y].setBackground(Color.YELLOW);
           } else {
             this.sus_barcos[x][y].setBackground(Color.GRAY);
@@ -174,39 +174,5 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
     }
     this.sus_barcos[y][x].setEnabled(false);
     this.sus_barcos[y][x].setBackground(Color.GRAY);
-  }
-
-  private boolean hayBarco(
-    final int x,
-    final int y
-  ) {
-    for (final Barco barco : this.barcos) {
-      if (this.barcoEnHorizontal(x, y, barco)
-        || this.barcoEnVertical(x, y, barco))
-        return true;
-    }
-    return false;
-  }
-
-  private boolean barcoEnHorizontal(
-    final int x,
-    final int y,
-    final Barco barco
-  ) {
-    return barco.direccion == Direccion.HORIZONTAL
-      && barco.posicion.y == y
-      && x >= barco.posicion.x
-      && x < barco.posicion.x + barco.longitud;
-  }
-
-  private boolean barcoEnVertical(
-    final int x,
-    final int y,
-    final Barco barco
-  ) {
-    return barco.direccion == Direccion.VERTICAL
-      && barco.posicion.x == x
-      && y >= barco.posicion.y
-      && y < barco.posicion.y + barco.longitud;
   }
 }
