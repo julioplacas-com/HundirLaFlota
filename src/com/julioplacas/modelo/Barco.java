@@ -1,5 +1,7 @@
 package com.julioplacas.modelo;
 
+import java.util.Arrays;
+
 public final class Barco {
 	public final Posicion posicion;
 	public final Direccion direccion;
@@ -12,4 +14,10 @@ public final class Barco {
 		this.longitud = longitud;
 		this.posicionesTocadas = new boolean[longitud];
 	}
+
+	@Override
+	public String toString() {
+		return "Barco [posicion=" + posicion + ", direccion=" + direccion + ", longitud=" + longitud;
+	}
+	
 }

@@ -8,4 +8,10 @@ public final class Posicion {
 		this.x = x;
 		this.y = y;
 	}
+
+	@Override
+	public String toString() {
+		return "Posicion [x=" + x + ", y=" + y + "]";
+	}
+	
 }
