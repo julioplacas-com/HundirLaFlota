@@ -35,11 +35,7 @@ public final class Cliente {
 		int estado = fEntrada.readInt();
 		System.out.println("Estado: " + Estado.values()[estado]);
 		
-		// Tema de la ventana
-		// Mandar los barcos al servidor
-		// Leer del servidor eventos
-		// Pintar en ventana
-		// Mandar al servidor eventos
+		Ventana ventana = new Ventana();
 	}
 	
 	private static Socket conectarConServer() {
