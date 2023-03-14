@@ -1,90 +1,200 @@
 package com.julioplacas.cliente;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Random;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import com.julioplacas.modelo.Barco;
+import com.julioplacas.modelo.Direccion;
 import com.julioplacas.modelo.Estado;
 import com.julioplacas.utilidad.Utilidad;
 
-import com.julioplacas.modelo.Direccion;
-import com.julioplacas.modelo.Posicion;
+public final class Cliente extends JFrame implements Runnable, ActionListener {
 
-public final class Cliente {
-	
-	public static void main(String[] args) throws IOException {
-		final Socket socket = conectarConServer();
-		if (socket == null) {
-			System.err.println("No se pudo conectar con el servidor");
-			return;
-		}
-		
-		final ObjectOutputStream fSalida = new ObjectOutputStream(socket.getOutputStream());
-		final ObjectInputStream fEntrada = new ObjectInputStream(socket.getInputStream());
-		
-		final Barco[] barcos = generarBarcos(new int[] { 2, 2, 3, 3, 4 });
-		fSalida.writeObject(barcos);
-		
-		Ventana ventana = new Ventana(socket, fSalida, fEntrada, barcos);
-	}
-	
-	private static Socket conectarConServer() {
-		int intentos = 0;
-		Socket socket = null;
-		while (intentos != 3) {
-			try { socket = new Socket(Utilidad.SERVER, Utilidad.PUERTO); break; }
-			catch (IOException e) {
-				intentos++;
-				System.err.println("Reintantando conexion ...");
-			}
-		}
-		return socket;
-	}
-	
-	private static Barco[] generarBarcos(int[] longitudes) {
-		Barco[] barcos = new Barco[longitudes.length];
-		final boolean[][] board = new boolean[Utilidad.MAX_SIZE][Utilidad.MAX_SIZE];
-		Random random = new Random();
-		for (int i = 0; i < longitudes.length; i++) {
-			int longitud = longitudes[i];
-			boolean valido = false;
-			while (!valido) {
-				int x = random.nextInt(Utilidad.MAX_SIZE);
-				int y = random.nextInt(Utilidad.MAX_SIZE);
-				Direccion direccion = random.nextBoolean() ? Direccion.HORIZONTAL : Direccion.VERTICAL;
-				valido = validarPosicion(x, y, direccion, longitud, board);
-				if (valido) {
-					Barco barco = new Barco(new Posicion(x, y), direccion, longitud);
-					for (int j = 0; j < longitud; j++) {
-						int pos_x = direccion == Direccion.HORIZONTAL ? x + j : x;
-						int pos_y = direccion == Direccion.VERTICAL ? y + j : y;
-						board[pos_x][pos_y] = true;
-					}
-					barcos[i] = barco;
-				}
-			}
-		}
-		return barcos;
+  public static void main(final String[] args) throws IOException {
+    final Socket socket = ConexionConServidor.conectarConServer();
+    if (socket == null) {
+      System.err.println("No se pudo conectar con el servidor");
+      return;
+    }
 
-	}
+    final ObjectOutputStream fSalida = new ObjectOutputStream(socket.getOutputStream());
+    final ObjectInputStream fEntrada = new ObjectInputStream(socket.getInputStream());
 
-	public static boolean validarPosicion(int x, int y, Direccion direccion, int longitud, boolean[][] board) {
-		for (int i = 0; i < longitud; i++) {
-			int pos_x = direccion == Direccion.HORIZONTAL ? x + i : x;
-			int pos_y = direccion == Direccion.VERTICAL ? y + i : y;
+    final Barco[] barcos = Generador.generarBarcos(new int[] { 2, 2, 3, 3, 4 });
+    fSalida.writeObject(barcos);
 
-			// Verifica que la posición esté dentro del tablero
-			if (pos_x < 0 || pos_x >= Utilidad.MAX_SIZE || pos_y < 0 || pos_y >= Utilidad.MAX_SIZE)
-				return false;
+    final Cliente cliente = new Cliente(socket, fSalida, fEntrada, barcos);
+  }
 
-			// Verifica que la posición no esté ocupada por otro barco
-			if (board[pos_x][pos_y]) return false;
-		}
-		return true;
-	}
+  private final JButton[][] mis_barcos;
+  private final JButton[][] sus_barcos;
+
+  private final Socket socket;
+  private final ObjectOutputStream fSalida;
+  private final ObjectInputStream fEntrada;
+  private final Barco[] barcos;
+
+  private final int turno;
+  private Estado estado;
+
+  private final Thread hilo;
+
+  public Cliente(
+    final Socket socket,
+    final ObjectOutputStream fSalida,
+    final ObjectInputStream fEntrada,
+    final Barco[] barcos
+  ) throws IOException {
+    super("Battleship");
+
+    this.socket = socket;
+    this.fSalida = fSalida;
+    this.fEntrada = fEntrada;
+    this.barcos = barcos;
+
+    this.hilo = new Thread(this);
+
+    this.turno = fEntrada.readInt();
+    System.out.println("Turno: " + this.turno);
+    this.estado = Estado.values()[fEntrada.readInt()];
+    System.out.println("Estado: " + this.estado);
+
+    this.setExtendedState(MAXIMIZED_BOTH);
+    this.setResizable(false);
+    this.setLayout(new GridLayout(1, 2));
+    final Container pane = this.getContentPane();
+    this.mis_barcos = this.initButtons(pane, BorderLayout.LINE_START, false);
+    this.sus_barcos = this.initButtons(pane, BorderLayout.LINE_END, true);
+    this.setVisible(true);
+
+    this.hilo.start();
+  }
+
+  @Override
+  public void run() {
+    while (true) {
+      if (this.turno == 1 && this.estado == Estado.TURNO_JUGADOR_1) {
+        try {
+          this.hilo.wait();
+        } catch (final InterruptedException e) {
+          e.printStackTrace();
+        }
+      } else {
+        try {
+          this.estado = Estado.values()[this.fEntrada.readInt()];
+          System.out.println("Estado recibido: " + this.estado);
+          final int x = this.fEntrada.readInt();
+          final int y = this.fEntrada.readInt();
+          System.out.println("Enemigo pincho: " + x + "," + y);
+          if (this.hayBarco(x, y)) {
+            this.sus_barcos[x][y].setBackground(Color.YELLOW);
+          } else {
+            this.sus_barcos[x][y].setBackground(Color.GRAY);
+          }
+        } catch (final IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
+  // Crea los botones y los añade al JFrame
+  private JButton[][] initButtons(
+    final Container pane,
+    final String pos,
+    final boolean accion
+  ) {
+    final JButton[][] buttons = new JButton[Utilidad.MAX_SIZE][Utilidad.MAX_SIZE];
+    final JPanel frame = new JPanel();
+    pane.add(frame, pos);
+
+    frame.setLayout(new GridLayout(Utilidad.MAX_SIZE + 1, Utilidad.MAX_SIZE + 1));
+
+    // Agregamos las etiquetas de la fila superior
+    frame.add(new JLabel());
+    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
+      frame.add(new JLabel(String.valueOf(i + 1), SwingConstants.CENTER));
+    }
+
+    // Creamos los botones y las etiquetas de la columna izquierda
+    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
+      frame.add(new JLabel(String.valueOf((char) ('A' + i)), SwingConstants.CENTER));
+      for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
+        buttons[i][j] = new JButton();
+        if (accion) {
+          buttons[i][j].addActionListener(this);
+        } else {
+          buttons[i][j].setBackground(Color.BLUE);
+        }
+
+        frame.add(buttons[i][j]);
+      }
+    }
+    return buttons;
+  }
+
+  @Override
+  public void actionPerformed(final ActionEvent e) {
+    final JButton button = (JButton) e.getSource();
+    int x = -1, y = -1;
+    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
+      for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
+        if (this.sus_barcos[i][j] == button) {
+          x = i;
+          y = j;
+          break;
+        }
+      }
+    }
+    this.sus_barcos[x][y].setEnabled(false);
+    this.sus_barcos[x][y].setBackground(Color.GRAY);
+  }
+
+  public boolean hayBarco(
+    final int x,
+    final int y
+  ) {
+    for (final Barco barco : this.barcos) {
+      if (this.barcoEnHorizontal(x, y, barco)
+        || this.barcoEnVertical(x, y, barco))
+        return true;
+    }
+    return false;
+  }
+
+  private boolean barcoEnHorizontal(
+    final int x,
+    final int y,
+    final Barco barco
+  ) {
+    return barco.direccion == Direccion.HORIZONTAL
+      && barco.posicion.y == y
+      && barco.posicion.x >= x
+      && barco.posicion.x + barco.longitud <= barco.posicion.x;
+  }
+
+  private boolean barcoEnVertical(
+    final int x,
+    final int y,
+    final Barco barco
+  ) {
+    return barco.direccion == Direccion.VERTICAL
+      && barco.posicion.x == x
+      && barco.posicion.y >= y
+      && barco.posicion.y + barco.longitud <= barco.posicion.y;
+  }
 }
