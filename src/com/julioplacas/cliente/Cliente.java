@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import com.julioplacas.modelo.Barco;
 import com.julioplacas.modelo.Estado;
 import com.julioplacas.utilidad.Utilidad;
 
@@ -25,6 +26,8 @@ public final class Cliente {
 		int estado = fEntrada.readInt();
 		System.out.println("Estado: " + Estado.values()[estado]);
 		
+		final Barco[] barcos = generarBarcos(new int[] { 2, 2, 3, 3, 4 });
+		
 		// Tema de la ventana
 		// Mandar los barcos al servidor
 		// Leer del servidor eventos
@@ -43,5 +46,11 @@ public final class Cliente {
 			}
 		}
 		return socket;
+	}
+	
+	private static Barco[] generarBarcos(int[] longitudes) {
+		Barco[] barcos = new Barco[longitudes.length];
+		// implementar
+		return barcos;
 	}
 }
