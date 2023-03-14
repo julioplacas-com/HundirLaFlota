@@ -113,9 +113,9 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
           final int y = this.fEntrada.readInt();
           System.out.println("Enemigo pincho: " + x + "," + y);
           if (Utilidad.hayBarcoEnPosicion(x, y, this.barcos)) {
-            this.sus_barcos[x][y].setBackground(Color.YELLOW);
+            this.mis_barcos[y][x].setBackground(Color.YELLOW);
           } else {
-            this.sus_barcos[x][y].setBackground(Color.GRAY);
+            this.mis_barcos[y][x].setBackground(Color.GRAY);
           }
         } catch (final IOException e) {
           e.printStackTrace();
