@@ -1,6 +1,10 @@
 package com.julioplacas.modelo;
 
-public final class Posicion {
+import java.io.Serializable;
+
+public final class Posicion implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	public final int x;
 	public final int y;
 	
@@ -8,4 +12,10 @@ public final class Posicion {
 		this.x = x;
 		this.y = y;
 	}
+
+	@Override
+	public String toString() {
+		return "x: " + x + ", y: " + y;
+	}
+	
 }

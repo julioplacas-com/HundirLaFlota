@@ -1,6 +1,10 @@
 package com.julioplacas.modelo;
 
-public final class Barco {
+import java.io.Serializable;
+
+public final class Barco implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	public final Posicion posicion;
 	public final Direccion direccion;
 	public final int longitud;
@@ -12,4 +16,10 @@ public final class Barco {
 		this.longitud = longitud;
 		this.posicionesTocadas = new boolean[longitud];
 	}
+
+	@Override
+	public String toString() {
+		return "Posicion: " + posicion + ", Direccion: " + direccion + ", Longitud: " + longitud;
+	}
+	
 }
