@@ -36,7 +36,7 @@ public final class Cliente {
 		int intentos = 0;
 		Socket socket = null;
 		while (intentos != 3) {
-			try { socket = new Socket("localhost", Utilidad.PUERTO); break; }
+			try { socket = new Socket(Utilidad.SERVER, Utilidad.PUERTO); break; }
 			catch (IOException e) {
 				intentos++;
 				System.err.println("Reintantando conexion ...");
