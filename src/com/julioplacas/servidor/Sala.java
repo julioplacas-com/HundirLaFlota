@@ -20,9 +20,7 @@ public final class Sala extends Thread {
 	
 	@Override
 	public void run() {
-		try {
-			mandarTurnos();
-		} catch (IOException e) {}
+		try { mandarTurnos(); } catch (IOException e) {}
 		while (true) {
 			// Recibir eventos del jugador que toque
 			// Validar que sea legal y enviar el nuevo estado a ambos jugadores
@@ -33,8 +31,10 @@ public final class Sala extends Thread {
 	private void mandarTurnos() throws IOException {
 		this.j1.fSalida.writeInt(1);
 		this.j1.fSalida.writeInt(estado.ordinal());
+		this.j1.fSalida.flush();
 		this.j2.fSalida.writeInt(2);
 		this.j2.fSalida.writeInt(estado.ordinal());
+		this.j2.fSalida.flush();
 		System.out.println("Turnos mandados");
 	}
 }
