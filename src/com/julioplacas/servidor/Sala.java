@@ -22,7 +22,7 @@ public final class Sala extends Thread {
 	public void run() {
 		try {
 			mandarTurnos();
-		} catch (IOException e) { }
+		} catch (IOException e) {}
 		while (true) {
 			// Recibir eventos del jugador que toque
 			// Validar que sea legal y enviar el nuevo estado a ambos jugadores

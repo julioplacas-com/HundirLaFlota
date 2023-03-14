@@ -14,14 +14,18 @@ public final class Servidor {
 		final ServerSocket serverSocket = new ServerSocket(Utilidad.PUERTO);
 		while (true) {
 			System.out.println("Esperando j1 ...");
-			final Socket j1 = esperarConexion(serverSocket);
+			final Socket j1Socket = esperarConexion(serverSocket);
 			System.out.println("Esperando j2 ...");
-			final Socket j2 = esperarConexion(serverSocket);
+			final Socket j2Socket = esperarConexion(serverSocket);
 			System.out.println("Buscando sala ...");
 			final int nSala = getSalaVacia();
 			if (nSala != -1) {
 				System.out.println("Pasando j1 y j2 a sala " + nSala);
-				salas[nSala] = new Sala(nSala, new Jugador(j1), new Jugador(j2));
+				try {
+					Jugador j1 = new Jugador(j1Socket);
+					Jugador j2 = new Jugador(j2Socket);
+					salas[nSala] = new Sala(nSala, j1, j2);
+				} catch (ClassNotFoundException e) { }
 			} else {
 				System.out.println("No hay salas disponibles");
 				// Implementar un mensaje a mandar al cliente "no hay salas disponibles"
