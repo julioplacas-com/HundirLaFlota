@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -19,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.julioplacas.modelo.Barco;
+import com.julioplacas.modelo.Estado;
 
 public class Ventana extends JFrame implements ActionListener {
 	private static final int BOARD_SIZE = 10;
@@ -31,14 +33,27 @@ public class Ventana extends JFrame implements ActionListener {
 	private final ObjectOutputStream fSalida;
 	private final ObjectInputStream fEntrada;
 	private final Barco[] barcos;
+	
+	private int turno;
+	private Estado estado;
 
-	public Ventana(Socket socket, ObjectOutputStream fSalida, ObjectInputStream fEntrada, Barco[] barcos) {
+	public Ventana(
+			Socket socket,
+			ObjectOutputStream fSalida,
+			ObjectInputStream fEntrada,
+			Barco[] barcos
+	) throws IOException {
 		super("Battleship");
 		
 		this.socket = socket;
 		this.fSalida = fSalida;
 		this.fEntrada = fEntrada;
 		this.barcos = barcos;
+
+		turno = fEntrada.readInt();
+		System.out.println("Turno: " + turno);
+		estado = Estado.values()[fEntrada.readInt()];
+		System.out.println("Estado: " + estado);
 		
 		setExtendedState(MAXIMIZED_BOTH);
 		setResizable(false);

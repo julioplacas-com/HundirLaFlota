@@ -30,11 +30,6 @@ public final class Cliente {
 		final Barco[] barcos = generarBarcos(new int[] { 2, 2, 3, 3, 4 });
 		fSalida.writeObject(barcos);
 		
-		int turno = fEntrada.readInt();
-		System.out.println("Turno: " + turno);
-		int estado = fEntrada.readInt();
-		System.out.println("Estado: " + Estado.values()[estado]);
-		
 		Ventana ventana = new Ventana(socket, fSalida, fEntrada, barcos);
 	}
 	
