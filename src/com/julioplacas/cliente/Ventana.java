@@ -48,7 +48,6 @@ public class Ventana extends JFrame implements Runnable, ActionListener {
 		this.barcos = barcos;
 
 		hilo = new Thread(this);
-		hilo.start();
 
 		turno = fEntrada.readInt();
 		System.out.println("Turno: " + turno);
@@ -62,6 +61,8 @@ public class Ventana extends JFrame implements Runnable, ActionListener {
 		mis_barcos = initButtons(pane, BorderLayout.LINE_START, false);
 		sus_barcos = initButtons(pane, BorderLayout.LINE_END, true);
 		setVisible(true);
+		
+		hilo.start();
 	}
 
 	public void run() {
@@ -76,9 +77,15 @@ public class Ventana extends JFrame implements Runnable, ActionListener {
 			} else {
 				try {
 					estado = Estado.values()[fEntrada.readInt()];
+					System.out.println("Estado recibido: " + estado);
 					int x = fEntrada.readInt();
 					int y = fEntrada.readInt();
-					sus_barcos[x][y].setBackground(Color.RED);
+					System.out.println("Enemigo pincho: " + x + "," + y);
+					if (hayBarco(x, y)) {
+						sus_barcos[x][y].setBackground(Color.YELLOW);
+					} else {
+						sus_barcos[x][y].setBackground(Color.GRAY);
+					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -108,6 +115,8 @@ public class Ventana extends JFrame implements Runnable, ActionListener {
 				buttons[i][j] = new JButton();
 				if (accion) {
 					buttons[i][j].addActionListener(this);
+				} else {
+					buttons[i][j].setBackground(Color.BLUE);
 				}
 
 				frame.add(buttons[i][j]);
@@ -131,11 +140,7 @@ public class Ventana extends JFrame implements Runnable, ActionListener {
 			}
 		}
 		sus_barcos[x][y].setEnabled(false);
-		if (hayBarco(x, y)) {
-			sus_barcos[x][y].setBackground(Color.YELLOW);
-		} else {
-			sus_barcos[x][y].setBackground(Color.BLUE);
-		}
+		sus_barcos[x][y].setBackground(Color.GRAY);
 	}
 
 	public boolean hayBarco(int x, int y) {
