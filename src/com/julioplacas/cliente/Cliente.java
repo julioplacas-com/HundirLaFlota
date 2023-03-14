@@ -3,6 +3,8 @@ package com.julioplacas.cliente;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Random;
 
@@ -22,15 +24,16 @@ public final class Cliente {
 			return;
 		}
 		
-		final DataOutputStream fSalida = new DataOutputStream(socket.getOutputStream());
-		final DataInputStream fEntrada = new DataInputStream(socket.getInputStream());
+		final ObjectOutputStream fSalida = new ObjectOutputStream(socket.getOutputStream());
+		final ObjectInputStream fEntrada = new ObjectInputStream(socket.getInputStream());
+		
+		final Barco[] barcos = generarBarcos(new int[] { 2, 2, 3, 3, 4 });
+		fSalida.writeObject(barcos);
 		
 		int turno = fEntrada.readInt();
 		System.out.println("Turno: " + turno);
 		int estado = fEntrada.readInt();
 		System.out.println("Estado: " + Estado.values()[estado]);
-		
-		final Barco[] barcos = generarBarcos(new int[] { 2, 2, 3, 3, 4 });
 		
 		// Tema de la ventana
 		// Mandar los barcos al servidor
