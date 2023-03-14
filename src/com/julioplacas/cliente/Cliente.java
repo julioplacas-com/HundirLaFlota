@@ -35,7 +35,7 @@ public final class Cliente {
 		int estado = fEntrada.readInt();
 		System.out.println("Estado: " + Estado.values()[estado]);
 		
-		Ventana ventana = new Ventana();
+		Ventana ventana = new Ventana(socket, fSalida, fEntrada, barcos);
 	}
 	
 	private static Socket conectarConServer() {

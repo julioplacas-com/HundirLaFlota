@@ -6,6 +6,9 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -15,15 +18,28 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.julioplacas.modelo.Barco;
+
 public class Ventana extends JFrame implements ActionListener {
 	private static final int BOARD_SIZE = 10;
 	private JButton[][] buttons;
 	private int[][] board;
 	private boolean activo = true;
 	private int barc = 2;
+	
+	private final Socket socket;
+	private final ObjectOutputStream fSalida;
+	private final ObjectInputStream fEntrada;
+	private final Barco[] barcos;
 
-	public Ventana() {
+	public Ventana(Socket socket, ObjectOutputStream fSalida, ObjectInputStream fEntrada, Barco[] barcos) {
 		super("Battleship");
+		
+		this.socket = socket;
+		this.fSalida = fSalida;
+		this.fEntrada = fEntrada;
+		this.barcos = barcos;
+		
 		setExtendedState(MAXIMIZED_BOTH);
 		setResizable(false);
 		buttons = new JButton[BOARD_SIZE][BOARD_SIZE];
