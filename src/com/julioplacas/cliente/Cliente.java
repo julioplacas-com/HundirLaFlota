@@ -1,6 +1,5 @@
 package com.julioplacas.cliente;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridLayout;
@@ -73,27 +72,88 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
 
     this.setExtendedState(MAXIMIZED_BOTH);
     this.setResizable(false);
+
+    // Dividir la pantalla en dos columnas
     this.setLayout(new GridLayout(1, 2));
     final Container pane = this.getContentPane();
-    this.mis_barcos = this.initButtons(pane, BorderLayout.LINE_START, false);
-    this.sus_barcos = this.initButtons(pane, BorderLayout.LINE_END, true);
-    this.setVisible(true);
 
-    this.pintarBarcos();
+    // Pintar la columna izquierda con mis barcos
+    this.mis_barcos = this.initMisBarcos();
+    this.pintarMisBarcos();
+
+    // Pintar la columna derecha con los barcos enemigos
+    this.sus_barcos = this.initBarcosEnemigos();
+
+    this.setVisible(true);
 
     this.hilo = new Thread(this);
     this.hilo.start();
   }
 
-  private void pintarBarcos() {
-    for (final Barco barco : this.barcos) {
-      for (int i = 0; i < barco.longitud; i++) {
+  private JButton[][] initMisBarcos() {
+    final JButton[][] buttons = new JButton[Utilidad.MAX_SIZE][Utilidad.MAX_SIZE];
+    final JPanel panel = this.crearRejilla();
+
+    this.crearEtiquetasSuperiores(panel);
+
+    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
+      // Letra de la columna
+      panel.add(new JLabel(String.valueOf((char) ('A' + i)), SwingConstants.CENTER));
+      // Botones
+      for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
+        final JButton button = new JButton();
+        button.setBackground(Color.BLUE);
+        button.setEnabled(false);
+        panel.add(button);
+        buttons[i][j] = button;
+      }
+    }
+
+    return buttons;
+  }
+
+  private JButton[][] initBarcosEnemigos() {
+    final JButton[][] buttons = new JButton[Utilidad.MAX_SIZE][Utilidad.MAX_SIZE];
+    final JPanel panel = this.crearRejilla();
+
+    this.crearEtiquetasSuperiores(panel);
+
+    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
+      // Letra de la columna
+      panel.add(new JLabel(String.valueOf((char) ('A' + i)), SwingConstants.CENTER));
+      // Botones
+      for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
+        final JButton button = new JButton();
+        button.addActionListener(this);
+        panel.add(button);
+        buttons[i][j] = button;
+      }
+    }
+
+    return buttons;
+  }
+
+  private JPanel crearRejilla() {
+    final JPanel panel = new JPanel();
+    this.getContentPane().add(panel);
+    panel.setLayout(new GridLayout(Utilidad.MAX_SIZE + 1, Utilidad.MAX_SIZE + 1));
+    return panel;
+  }
+
+  private void crearEtiquetasSuperiores(final JPanel panel) {
+    panel.add(new JLabel());
+    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
+      panel.add(new JLabel(String.valueOf(i + 1), SwingConstants.CENTER));
+    }
+  }
+
+  private void pintarMisBarcos() {
+    for (final Barco barco : this.barcos)
+      for (int i = 0; i < barco.longitud; i++)
         if (barco.direccion == Direccion.HORIZONTAL)
           this.mis_barcos[barco.posicion.y][barco.posicion.x + i].setText("A");
         else
           this.mis_barcos[barco.posicion.y + i][barco.posicion.x].setText("A");
-      }
-    }
   }
 
   @Override
@@ -122,41 +182,6 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
         }
       }
     }
-  }
-
-  // Crea los botones y los añade al JFrame
-  private JButton[][] initButtons(
-    final Container pane,
-    final String pos,
-    final boolean accion
-  ) {
-    final JButton[][] buttons = new JButton[Utilidad.MAX_SIZE][Utilidad.MAX_SIZE];
-    final JPanel frame = new JPanel();
-    pane.add(frame, pos);
-
-    frame.setLayout(new GridLayout(Utilidad.MAX_SIZE + 1, Utilidad.MAX_SIZE + 1));
-
-    // Agregamos las etiquetas de la fila superior
-    frame.add(new JLabel());
-    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
-      frame.add(new JLabel(String.valueOf(i + 1), SwingConstants.CENTER));
-    }
-
-    // Creamos los botones y las etiquetas de la columna izquierda
-    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
-      frame.add(new JLabel(String.valueOf((char) ('A' + i)), SwingConstants.CENTER));
-      for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
-        buttons[i][j] = new JButton();
-        if (accion) {
-          buttons[i][j].addActionListener(this);
-        } else {
-          buttons[i][j].setBackground(Color.BLUE);
-        }
-
-        frame.add(buttons[i][j]);
-      }
-    }
-    return buttons;
   }
 
   @Override
