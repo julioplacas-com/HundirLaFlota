@@ -50,6 +50,9 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   private final int turno;
   private Estado estado;
 
+  private int mandarx = -1;
+  private int mandary = -1;
+
   private final Thread hilo;
 
   public Cliente(
@@ -158,23 +161,73 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
           this.mis_barcos[barco.posicion.y + i][barco.posicion.x].setText("A");
   }
 
+  private boolean esMiTurno() {
+    return (this.turno == 1 && this.estado == Estado.TURNO_JUGADOR_1)
+      || (this.turno == 2 && this.estado == Estado.TURNO_JUGADOR_2);
+  }
+
+  private boolean heGanado() {
+    return (this.turno == 1 && this.estado == Estado.VICTORIA_JUGADOR_1)
+      || (this.turno == 2 && this.estado == Estado.VICTORIA_JUGADOR_2);
+  }
+
+  private boolean hePerdido() {
+    return (this.turno == 1 && this.estado == Estado.VICTORIA_JUGADOR_2)
+      || (this.turno == 2 && this.estado == Estado.VICTORIA_JUGADOR_1);
+  }
+
+  private void cerrarConexion() {
+    try {
+      this.fEntrada.close();
+      this.fSalida.close();
+      this.socket.close();
+    } catch (final IOException e) {
+    }
+  }
+
   @Override
   public void run() {
     while (true) {
-      if (this.turno == 1 && this.estado == Estado.TURNO_JUGADOR_1) {
-        try {
-          this.hilo.wait();
-        } catch (final InterruptedException e) {
-          e.printStackTrace();
+      if (this.esMiTurno()) {
+        synchronized (this.hilo) {
+          try {
+            this.hilo.wait();
+          } catch (final InterruptedException e) {
+            e.printStackTrace();
+          }
+          try {
+            this.fSalida.writeInt(this.mandarx);
+            this.fSalida.writeInt(this.mandary);
+            this.fSalida.flush();
+          } catch (final IOException e) {
+            e.printStackTrace();
+          }
+          try {
+            final boolean tocoBarco = this.fEntrada.readBoolean();
+            if (tocoBarco) {
+              this.sus_barcos[this.mandary][this.mandarx].setBackground(Color.YELLOW);
+            } else {
+              this.sus_barcos[this.mandary][this.mandarx].setBackground(Color.GRAY);
+            }
+          } catch (final IOException e) {
+            e.printStackTrace();
+          }
+          this.mandarx = -1;
+          this.mandary = -1;
         }
+      } else if (this.heGanado()) {
+        this.cerrarConexion();
+        System.out.println("Has ganao");
+      } else if (this.hePerdido()) {
+        this.cerrarConexion();
+        System.out.println("Pringao");
       } else {
         try {
-          this.estado = Estado.values()[this.fEntrada.readInt()];
-          System.out.println("Estado recibido: " + this.estado);
           final int x = this.fEntrada.readInt();
           final int y = this.fEntrada.readInt();
           System.out.println("Enemigo pincho: " + x + "," + y);
-          if (Utilidad.hayBarcoEnPosicion(x, y, this.barcos)) {
+          final boolean tocoBarco = this.fEntrada.readBoolean();
+          if (tocoBarco) {
             this.mis_barcos[y][x].setBackground(Color.YELLOW);
           } else {
             this.mis_barcos[y][x].setBackground(Color.GRAY);
@@ -183,16 +236,29 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
           e.printStackTrace();
         }
       }
+      try {
+        this.estado = Estado.values()[this.fEntrada.readInt()];
+        System.out.println("Estado recibido: " + this.estado);
+      } catch (final IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
   @Override
   public void actionPerformed(final ActionEvent e) {
+    if (!this.esMiTurno())
+      return;
     final JButton button = (JButton) e.getSource();
     final int x = Utilidad.charToInt(button.getActionCommand().charAt(0));
     final int y = Utilidad.charToInt(button.getActionCommand().charAt(2));
 
     this.sus_barcos[y][x].setEnabled(false);
     this.sus_barcos[y][x].setBackground(Color.GRAY);
+    this.mandarx = x;
+    this.mandary = y;
+    synchronized (this.hilo) {
+      this.hilo.notify();
+    }
   }
 }
