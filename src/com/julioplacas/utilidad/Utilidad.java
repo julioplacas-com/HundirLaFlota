@@ -41,4 +41,8 @@ public final class Utilidad {
       && y >= barco.posicion.y
       && y < barco.posicion.y + barco.longitud;
   }
+
+  public static int charToInt(final char n) {
+    return n - '0';
+  }
 }

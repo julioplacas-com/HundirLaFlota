@@ -125,6 +125,8 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
       for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
         final JButton button = new JButton();
         button.addActionListener(this);
+        // El tag del boton es: "x y"
+        button.setActionCommand(j + " " + i);
         panel.add(button);
         buttons[i][j] = button;
       }
@@ -187,16 +189,9 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   @Override
   public void actionPerformed(final ActionEvent e) {
     final JButton button = (JButton) e.getSource();
-    int y = -1, x = -1;
-    for (int i = 0; i < Utilidad.MAX_SIZE; i++) {
-      for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
-        if (this.sus_barcos[i][j] == button) {
-          y = i;
-          x = j;
-          break;
-        }
-      }
-    }
+    final int x = Utilidad.charToInt(button.getActionCommand().charAt(0));
+    final int y = Utilidad.charToInt(button.getActionCommand().charAt(2));
+
     this.sus_barcos[y][x].setEnabled(false);
     this.sus_barcos[y][x].setBackground(Color.GRAY);
   }
