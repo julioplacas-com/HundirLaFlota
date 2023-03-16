@@ -260,7 +260,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   }
 
   public void mensajeGanador() {
-    JOptionPane.showMessageDialog(null, "¡HAS PERDIDO!", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(null, "¡HAS GANADO!", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void mensajePerdedor() {
