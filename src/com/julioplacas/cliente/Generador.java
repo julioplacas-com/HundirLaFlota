@@ -67,64 +67,60 @@ public final class Generador {
   ) {
     if (barco.direccion == Direccion.HORIZONTAL) {
       final int pos_x_izq = barco.posicion.x - 1;
-      if (pos_x_izq < 0)
-        return;
+      if (pos_x_izq >= 0) {
+        // Arriba
+        if (barco.posicion.y - 1 >= 0)
+          posiciones[pos_x_izq][barco.posicion.y - 1] = true;
 
-      // Arriba
-      if (barco.posicion.y - 1 >= 0)
-        posiciones[pos_x_izq][barco.posicion.y - 1] = true;
+        // En medio
+        posiciones[pos_x_izq][barco.posicion.y] = true;
 
-      // En medio
-      posiciones[pos_x_izq][barco.posicion.y] = true;
-
-      // Abajo
-      if (barco.posicion.y + 1 < Utilidad.MAX_SIZE)
-        posiciones[pos_x_izq][barco.posicion.y + 1] = true;
+        // Abajo
+        if (barco.posicion.y + 1 < Utilidad.MAX_SIZE)
+          posiciones[pos_x_izq][barco.posicion.y + 1] = true;
+      }
 
       final int pos_x_der = barco.posicion.x + barco.longitud;
-      if (pos_x_der >= Utilidad.MAX_SIZE)
-        return;
+      if (pos_x_der < Utilidad.MAX_SIZE) {
+        // Arriba
+        if (barco.posicion.y - 1 >= 0)
+          posiciones[pos_x_der][barco.posicion.y - 1] = true;
 
-      // Arriba
-      if (barco.posicion.y - 1 >= 0)
-        posiciones[pos_x_der][barco.posicion.y - 1] = true;
+        // En medio
+        posiciones[pos_x_der][barco.posicion.y] = true;
 
-      // En medio
-      posiciones[pos_x_der][barco.posicion.y] = true;
-
-      // Abajo
-      if (barco.posicion.y + 1 < Utilidad.MAX_SIZE)
-        posiciones[pos_x_der][barco.posicion.y + 1] = true;
+        // Abajo
+        if (barco.posicion.y + 1 < Utilidad.MAX_SIZE)
+          posiciones[pos_x_der][barco.posicion.y + 1] = true;
+      }
     } else {
       final int pos_y_arb = barco.posicion.y - 1;
-      if (pos_y_arb < 0)
-        return;
+      if (pos_y_arb >= 0) {
+        // Izquierda
+        if (barco.posicion.x - 1 >= 0)
+          posiciones[barco.posicion.x - 1][pos_y_arb] = true;
 
-      // Izquierda
-      if (barco.posicion.x - 1 >= 0)
-        posiciones[barco.posicion.x - 1][pos_y_arb] = true;
+        // En medio
+        posiciones[barco.posicion.x][pos_y_arb] = true;
 
-      // En medio
-      posiciones[barco.posicion.x][pos_y_arb] = true;
-
-      // Derecha
-      if (barco.posicion.x + 1 < Utilidad.MAX_SIZE)
-        posiciones[barco.posicion.x + 1][pos_y_arb] = true;
+        // Derecha
+        if (barco.posicion.x + 1 < Utilidad.MAX_SIZE)
+          posiciones[barco.posicion.x + 1][pos_y_arb] = true;
+      }
 
       final int pos_y_abj = barco.posicion.y + barco.longitud;
-      if (pos_y_abj >= Utilidad.MAX_SIZE)
-        return;
+      if (pos_y_abj < Utilidad.MAX_SIZE) {
+        // Izquierda
+        if (barco.posicion.x - 1 >= 0)
+          posiciones[barco.posicion.x - 1][pos_y_abj] = true;
 
-      // Izquierda
-      if (barco.posicion.x - 1 >= 0)
-        posiciones[barco.posicion.x - 1][pos_y_abj] = true;
+        // En medio
+        posiciones[barco.posicion.x][pos_y_abj] = true;
 
-      // En medio
-      posiciones[barco.posicion.x][pos_y_abj] = true;
-
-      // Derecha
-      if (barco.posicion.x + 1 < Utilidad.MAX_SIZE)
-        posiciones[barco.posicion.x + 1][pos_y_abj] = true;
+        // Derecha
+        if (barco.posicion.x + 1 < Utilidad.MAX_SIZE)
+          posiciones[barco.posicion.x + 1][pos_y_abj] = true;
+      }
     }
   }
 
