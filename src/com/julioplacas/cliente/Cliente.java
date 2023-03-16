@@ -25,6 +25,7 @@ import com.julioplacas.utilidad.Utilidad;
 public final class Cliente extends JFrame implements Runnable, ActionListener {
 
   public static void main(final String[] args) throws IOException {
+    JOptionPane.showInputDialog("Escribe tu nombre");
     final Socket socket = ConexionConServidor.conectarConServer();
     if (socket == null) {
       System.err.println("No se pudo conectar con el servidor");
@@ -35,6 +36,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
     final ObjectInputStream fEntrada = new ObjectInputStream(socket.getInputStream());
 
     final Barco[] barcos = Generador.generarBarcos(new int[] { 2, 2, 3, 3, 4 });
+
     fSalida.writeObject(barcos);
 
     final Cliente cliente = new Cliente(socket, fSalida, fEntrada, barcos);
