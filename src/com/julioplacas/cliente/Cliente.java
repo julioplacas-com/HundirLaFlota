@@ -191,7 +191,8 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
 
   @Override
   public void run() {
-    while (true) {
+    boolean bandera = true;
+    while (bandera) {
       if (this.esMiTurno()) {
         synchronized (this.hilo) {
           try {
@@ -222,9 +223,11 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
           this.mandary = -1;
         }
       } else if (this.heGanado()) {
+        bandera = false;
         this.cerrarConexion();
         System.out.println("Has ganao");
       } else if (this.hePerdido()) {
+        bandera = false;
         this.cerrarConexion();
         System.out.println("Pringao");
       } else {
