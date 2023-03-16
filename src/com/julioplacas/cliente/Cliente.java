@@ -248,7 +248,6 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
         this.estado = Estado.values()[this.fEntrada.readInt()];
         System.out.println("Estado recibido: " + this.estado);
       } catch (final IOException e) {
-        e.printStackTrace();
       }
     }
   }
