@@ -106,7 +106,6 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
       for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
         final JButton button = new JButton();
         button.setBackground(Color.BLUE);
-        button.setText("~");
         button.setEnabled(false);
         panel.add(button);
         buttons[i][j] = button;
