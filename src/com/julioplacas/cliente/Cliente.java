@@ -106,6 +106,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
       for (int j = 0; j < Utilidad.MAX_SIZE; j++) {
         final JButton button = new JButton();
         button.setBackground(Color.BLUE);
+        button.setText("~");
         button.setEnabled(false);
         panel.add(button);
         buttons[i][j] = button;
@@ -155,10 +156,13 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   private void pintarMisBarcos() {
     for (final Barco barco : this.barcos)
       for (int i = 0; i < barco.longitud; i++)
-        if (barco.direccion == Direccion.HORIZONTAL)
+        if (barco.direccion == Direccion.HORIZONTAL) {
           this.mis_barcos[barco.posicion.y][barco.posicion.x + i].setBackground(Color.GREEN);
-        else
+          this.mis_barcos[barco.posicion.y][barco.posicion.x + i].setText("B");
+        } else {
           this.mis_barcos[barco.posicion.y + i][barco.posicion.x].setBackground(Color.GREEN);
+          this.mis_barcos[barco.posicion.y + i][barco.posicion.x].setText("B");
+        }
   }
 
   private boolean esMiTurno() {
@@ -206,8 +210,10 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
             final boolean tocoBarco = this.fEntrada.readBoolean();
             if (tocoBarco) {
               this.sus_barcos[this.mandary][this.mandarx].setBackground(Color.YELLOW);
+              this.sus_barcos[this.mandary][this.mandarx].setText("*");
             } else {
               this.sus_barcos[this.mandary][this.mandarx].setBackground(Color.GRAY);
+              this.sus_barcos[this.mandary][this.mandarx].setText("A");
             }
           } catch (final IOException e) {
             e.printStackTrace();
@@ -229,8 +235,10 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
           final boolean tocoBarco = this.fEntrada.readBoolean();
           if (tocoBarco) {
             this.mis_barcos[y][x].setBackground(Color.YELLOW);
+            this.mis_barcos[y][x].setText("*");
           } else {
             this.mis_barcos[y][x].setBackground(Color.GRAY);
+            this.mis_barcos[y][x].setText("A");
           }
         } catch (final IOException e) {
           e.printStackTrace();
@@ -255,6 +263,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
 
     this.sus_barcos[y][x].setEnabled(false);
     this.sus_barcos[y][x].setBackground(Color.GRAY);
+    this.sus_barcos[y][x].setText("A");
     this.mandarx = x;
     this.mandary = y;
     synchronized (this.hilo) {
