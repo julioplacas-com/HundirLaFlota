@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.julioplacas.modelo.Estado;
 import com.julioplacas.utilidad.Utilidad;
 
 public final class Servidor {
@@ -38,7 +39,9 @@ public final class Servidor {
   // Retorna -1 si no hay salas vacias
   private static int getSalaVacia() {
     for (int i = 0; i < salas.length; i++)
-      if (salas[i] == null)
+      if (salas[i] == null
+        || !(salas[i].estado == Estado.TURNO_JUGADOR_1
+          || salas[i].estado == Estado.TURNO_JUGADOR_2))
         return i;
     return -1;
   }
