@@ -156,9 +156,9 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
     for (final Barco barco : this.barcos)
       for (int i = 0; i < barco.longitud; i++)
         if (barco.direccion == Direccion.HORIZONTAL)
-          this.mis_barcos[barco.posicion.y][barco.posicion.x + i].setText("A");
+          this.mis_barcos[barco.posicion.y][barco.posicion.x + i].setBackground(Color.GREEN);
         else
-          this.mis_barcos[barco.posicion.y + i][barco.posicion.x].setText("A");
+          this.mis_barcos[barco.posicion.y + i][barco.posicion.x].setBackground(Color.GREEN);
   }
 
   private boolean esMiTurno() {
