@@ -11,7 +11,7 @@ public class ConexionConServidor {
     Socket socket = null;
     while (intentos != 3) {
       try {
-        socket = new Socket(Utilidad.SERVER, Utilidad.PUERTO);
+        socket = new Socket("localhost", Utilidad.PUERTO);
         break;
       } catch (final IOException e) {
         intentos++;

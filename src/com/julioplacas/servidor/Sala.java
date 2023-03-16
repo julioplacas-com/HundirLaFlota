@@ -1,5 +1,6 @@
 package com.julioplacas.servidor;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 import com.julioplacas.modelo.Estado;
@@ -9,7 +10,7 @@ public final class Sala extends Thread {
   public final int nSala;
   public final Jugador j1;
   public final Jugador j2;
-  private Estado estado;
+  public Estado estado;
 
   public Sala(
     final int nSala,
@@ -29,8 +30,8 @@ public final class Sala extends Thread {
       this.mandarTurnos();
     } catch (final IOException e) {
     }
-    while (true) {
-      // Recibir eventos del jugador que toque
+    boolean bandera = true;
+    while (bandera) {
       switch (this.estado) {
       case TURNO_JUGADOR_1:
         try {
@@ -62,8 +63,10 @@ public final class Sala extends Thread {
           this.j1.fSalida.flush();
           this.j2.fSalida.writeInt(this.estado.ordinal());
           this.j2.fSalida.flush();
-        } catch (final IOException e) {
-          e.printStackTrace();
+        } catch (final EOFException e) {
+          bandera = false;
+          this.estado = Estado.ERROR;
+        } catch (final Exception e) {
         }
 
         break;
@@ -98,8 +101,10 @@ public final class Sala extends Thread {
           this.j2.fSalida.flush();
           this.j1.fSalida.writeInt(this.estado.ordinal());
           this.j1.fSalida.flush();
-        } catch (final IOException e) {
-          e.printStackTrace();
+        } catch (final EOFException e) {
+          bandera = false;
+          this.estado = Estado.ERROR;
+        } catch (final Exception e) {
         }
 
         break;
@@ -107,8 +112,6 @@ public final class Sala extends Thread {
       default:
         break;
       }
-      // Validar que sea legal y enviar el nuevo estado a ambos jugadores
-      // Enviar al jugador contrario donde toco el actual
     }
   }
 
