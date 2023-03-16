@@ -13,6 +13,7 @@ import java.net.Socket;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -224,11 +225,15 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
       } else if (this.heGanado()) {
         bandera = false;
         this.cerrarConexion();
-        System.out.println("Has ganao");
+
+        this.mensajeGanador();
+        this.dispose();
       } else if (this.hePerdido()) {
         bandera = false;
         this.cerrarConexion();
-        System.out.println("Pringao");
+
+        this.mensajePerdedor();
+        this.dispose();
       } else {
         try {
           final int x = this.fEntrada.readInt();
@@ -252,6 +257,14 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
       } catch (final IOException e) {
       }
     }
+  }
+
+  public void mensajeGanador() {
+    JOptionPane.showMessageDialog(null, "¡HAS GANADO!", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void mensajePerdedor() {
+    JOptionPane.showMessageDialog(null, "¡PERDEDOR!", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override
