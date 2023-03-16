@@ -226,13 +226,15 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
       } else if (this.heGanado()) {
         bandera = false;
         this.cerrarConexion();
-        System.out.println("Has ganao");
+
         this.mensajeGanador();
+        this.dispose();
       } else if (this.hePerdido()) {
         bandera = false;
         this.cerrarConexion();
-        System.out.println("Pringao");
+
         this.mensajePerdedor();
+        this.dispose();
       } else {
         try {
           final int x = this.fEntrada.readInt();
@@ -259,11 +261,11 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   }
 
   public void mensajeGanador() {
-    JOptionPane.showMessageDialog(null, "¡HAS GANADO!");
+    JOptionPane.showMessageDialog(null, "¡HAS GANADO!", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void mensajePerdedor() {
-    JOptionPane.showMessageDialog(null, "¡PERDEDOR!");
+    JOptionPane.showMessageDialog(null, "¡PERDEDOR!", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override
