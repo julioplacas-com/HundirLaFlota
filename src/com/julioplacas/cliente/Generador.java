@@ -29,6 +29,7 @@ public final class Generador {
         }
       }
     }
+
     return barcos;
   }
 
@@ -36,14 +37,94 @@ public final class Generador {
     final Barco barco,
     final boolean[][] posiciones
   ) {
+    rellenarFlancos(barco, posiciones);
     for (int j = 0; j < barco.longitud; j++) {
-      final int pos_x = barco.direccion == Direccion.HORIZONTAL
-        ? barco.posicion.x + j
-        : barco.posicion.x;
-      final int pos_y = barco.direccion == Direccion.VERTICAL
-        ? barco.posicion.y + j
-        : barco.posicion.y;
-      posiciones[pos_x][pos_y] = true;
+      if (barco.direccion == Direccion.HORIZONTAL) {
+        final int pos_x = barco.posicion.x + j;
+        final int pos_y = barco.posicion.y;
+        posiciones[pos_x][pos_y] = true;
+
+        if (pos_y - 1 >= 0)
+          posiciones[pos_x][pos_y - 1] = true;
+        if (pos_y + 1 < Utilidad.MAX_SIZE)
+          posiciones[pos_x][pos_y + 1] = true;
+      } else {
+        final int pos_x = barco.posicion.x;
+        final int pos_y = barco.posicion.y + j;
+        posiciones[pos_x][pos_y] = true;
+
+        if (pos_x - 1 >= 0)
+          posiciones[pos_x - 1][pos_y] = true;
+        if (pos_x + 1 < Utilidad.MAX_SIZE)
+          posiciones[pos_x + 1][pos_y] = true;
+      }
+    }
+  }
+
+  private static void rellenarFlancos(
+    final Barco barco,
+    final boolean[][] posiciones
+  ) {
+    if (barco.direccion == Direccion.HORIZONTAL) {
+      final int pos_x_izq = barco.posicion.x - 1;
+      if (pos_x_izq < 0)
+        return;
+
+      // Arriba
+      if (barco.posicion.y - 1 >= 0)
+        posiciones[pos_x_izq][barco.posicion.y - 1] = true;
+
+      // En medio
+      posiciones[pos_x_izq][barco.posicion.y] = true;
+
+      // Abajo
+      if (barco.posicion.y + 1 < Utilidad.MAX_SIZE)
+        posiciones[pos_x_izq][barco.posicion.y + 1] = true;
+
+      final int pos_x_der = barco.posicion.x + barco.longitud;
+      if (pos_x_der >= Utilidad.MAX_SIZE)
+        return;
+
+      // Arriba
+      if (barco.posicion.y - 1 >= 0)
+        posiciones[pos_x_der][barco.posicion.y - 1] = true;
+
+      // En medio
+      posiciones[pos_x_der][barco.posicion.y] = true;
+
+      // Abajo
+      if (barco.posicion.y + 1 < Utilidad.MAX_SIZE)
+        posiciones[pos_x_der][barco.posicion.y + 1] = true;
+    } else {
+      final int pos_y_arb = barco.posicion.y - 1;
+      if (pos_y_arb < 0)
+        return;
+
+      // Izquierda
+      if (barco.posicion.x - 1 >= 0)
+        posiciones[barco.posicion.x - 1][pos_y_arb] = true;
+
+      // En medio
+      posiciones[barco.posicion.x][pos_y_arb] = true;
+
+      // Derecha
+      if (barco.posicion.x + 1 < Utilidad.MAX_SIZE)
+        posiciones[barco.posicion.x + 1][pos_y_arb] = true;
+
+      final int pos_y_abj = barco.posicion.y + barco.longitud;
+      if (pos_y_abj >= Utilidad.MAX_SIZE)
+        return;
+
+      // Izquierda
+      if (barco.posicion.x - 1 >= 0)
+        posiciones[barco.posicion.x - 1][pos_y_abj] = true;
+
+      // En medio
+      posiciones[barco.posicion.x][pos_y_abj] = true;
+
+      // Derecha
+      if (barco.posicion.x + 1 < Utilidad.MAX_SIZE)
+        posiciones[barco.posicion.x + 1][pos_y_abj] = true;
     }
   }
 
