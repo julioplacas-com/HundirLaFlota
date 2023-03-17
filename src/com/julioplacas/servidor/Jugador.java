@@ -12,6 +12,7 @@ public final class Jugador {
   public final Socket socket;
   public final ObjectOutputStream fSalida;
   public final ObjectInputStream fEntrada;
+  public final String nombre;
   public int barcosPorTocar;
 
   public Jugador(
@@ -21,6 +22,7 @@ public final class Jugador {
     this.fSalida = new ObjectOutputStream(socket.getOutputStream());
     this.fEntrada = new ObjectInputStream(socket.getInputStream());
     this.barcos = (Barco[]) this.fEntrada.readObject();
+    this.nombre = (String) this.fEntrada.readObject();
     this.barcosPorTocar = 0;
     for (final Barco barco : this.barcos)
       this.barcosPorTocar += barco.longitud;
