@@ -40,7 +40,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
     fSalida.writeObject(barcos);
     fSalida.writeObject(nombre);
 
-    final Cliente cliente = new Cliente(socket, fSalida, fEntrada, barcos,nombre);
+    final Cliente cliente = new Cliente(socket, fSalida, fEntrada, barcos, nombre);
   }
 
   private final JButton[][] mis_barcos;
@@ -82,7 +82,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
 
     this.setExtendedState(MAXIMIZED_BOTH);
     this.setResizable(false);
-      setTitle("Battleship " + nombre);
+    this.setTitle("Battleship " + nombre);
     // Dividir la pantalla en dos columnas
     this.setLayout(new GridLayout(1, 2));
     final Container pane = this.getContentPane();

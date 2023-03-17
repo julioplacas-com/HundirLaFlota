@@ -21,6 +21,9 @@ public final class Sala extends Thread {
     this.j1 = j1;
     this.j2 = j2;
     this.estado = Estado.TURNO_JUGADOR_1;
+
+    System.out.println("Sala " + nSala + ": j1 -> " + j1.nombre + ", j2 -> " + j2.nombre);
+
     this.start();
   }
 
