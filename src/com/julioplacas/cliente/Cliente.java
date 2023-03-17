@@ -25,6 +25,7 @@ import com.julioplacas.utilidad.Utilidad;
 public final class Cliente extends JFrame implements Runnable, ActionListener {
 
   public static void main(final String[] args) throws IOException {
+    final String nombre = JOptionPane.showInputDialog("Escribe tu nombre");
     final Socket socket = ConexionConServidor.conectarConServer();
     if (socket == null) {
       System.err.println("No se pudo conectar con el servidor");
@@ -35,9 +36,11 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
     final ObjectInputStream fEntrada = new ObjectInputStream(socket.getInputStream());
 
     final Barco[] barcos = Generador.generarBarcos(new int[] { 2, 2, 3, 3, 4 });
-    fSalida.writeObject(barcos);
 
-    final Cliente cliente = new Cliente(socket, fSalida, fEntrada, barcos);
+    fSalida.writeObject(barcos);
+    fSalida.writeObject(nombre);
+
+    final Cliente cliente = new Cliente(socket, fSalida, fEntrada, barcos, nombre);
   }
 
   private final JButton[][] mis_barcos;
@@ -47,6 +50,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
   private final ObjectOutputStream fSalida;
   private final ObjectInputStream fEntrada;
   private final Barco[] barcos;
+  private final String nombre;
 
   private final int turno;
   private Estado estado;
@@ -60,14 +64,16 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
     final Socket socket,
     final ObjectOutputStream fSalida,
     final ObjectInputStream fEntrada,
-    final Barco[] barcos
+    final Barco[] barcos,
+    final String nombre
   ) throws IOException {
-    super("Battleship");
+    super();
 
     this.socket = socket;
     this.fSalida = fSalida;
     this.fEntrada = fEntrada;
     this.barcos = barcos;
+    this.nombre = nombre;
 
     this.turno = fEntrada.readInt();
     System.out.println("Turno: " + this.turno);
@@ -76,7 +82,7 @@ public final class Cliente extends JFrame implements Runnable, ActionListener {
 
     this.setExtendedState(MAXIMIZED_BOTH);
     this.setResizable(false);
-
+    this.setTitle("Battleship " + nombre);
     // Dividir la pantalla en dos columnas
     this.setLayout(new GridLayout(1, 2));
     final Container pane = this.getContentPane();
